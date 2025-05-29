@@ -1,0 +1,6 @@
+{
+  "json.schemas": [{
+    "https://taskfile.dev/schema.json": [ "**/Taskfile.yml" ]
+  }],
+  "editor.foldingStrategy": "indentation"
+}

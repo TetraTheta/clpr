@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: '3'
+
+vars:
+  BIN: clpr
+  GCF: all="-B -l"
+  LDF: -s -w -extldflags "-static"
+
+tasks:
+  default:
+    cmds:
+      - task: build:windows
+      - task: build:linux
+      - task: build:darwin
+  build:windows:
+    env:
+      CGO_ENABLED: 0
+      GOARCH: amd64
+      GOOS: windows
+    dir: '{{.USER_WORKING_DIR | toSlash}}/target/windows-amd64'
+    vars:
+      PATH: '{{.USER_WORKING_DIR | toSlash}}/target/windows-amd64'
+    cmds:
+      - go build -C "../../" -trimpath -ldflags='{{.LDF}}' -gcflags={{.GCF}} -tags netgo -o "{{.PATH}}/{{.BIN}}.exe"
+      # Using UPX requires more RAM but File Size is drastically reduced.
+      - upx --brute "{{.PATH}}/{{.BIN}}.exe" # Using UPX increases memory usage by 3MB
+  build:linux:
+    env:
+      CGO_ENABLED: 0
+      GOARCH: amd64
+      GOOS: linux
+    dir: '{{.USER_WORKING_DIR | toSlash}}/target/linux-amd64'
+    vars:
+      PATH: '{{.USER_WORKING_DIR | toSlash}}/target/linux-amd64'
+    cmds:
+      - go build -C "../../" -trimpath -ldflags='{{.LDF}}' -gcflags={{.GCF}} -tags netgo -o "{{.PATH}}/{{.BIN}}"
+      # Using UPX requires more RAM but File Size is drastically reduced.
+      - upx --brute "{{.PATH}}/{{.BIN}}"
+  build:darwin:
+    env:
+      CGO_ENABLED: 0
+      GOARCH: arm64
+      GOOS: darwin
+    dir: '{{.USER_WORKING_DIR | toSlash}}/target/darwin-arm64'
+    vars:
+      PATH: '{{.USER_WORKING_DIR | toSlash}}/target/darwin-arm64'
+    cmds:
+      - go build -C "../../" -trimpath -ldflags='{{.LDF}}' -gcflags={{.GCF}} -tags netgo -o "{{.PATH}}/{{.BIN}}"
+      # Using UPX requires more RAM but File Size is drastically reduced.
+      # - upx --brute "{{.PATH}}/{{.BIN}}" # UPX doesn't support macOS yet
