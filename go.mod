@@ -5,7 +5,7 @@ go 1.25
 require (
 	github.com/integrii/flaggy v1.8.0
 	github.com/maruel/natural v1.3.0
-	golang.design/x/clipboard v0.8.0
+	golang.design/x/clipboard v0.9.0
 )
 
 require (
